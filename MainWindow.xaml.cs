@@ -25,12 +25,20 @@ namespace MegaMap
     public partial class MainWindow : Window
     {
         List<MapObject> objects = new List<MapObject>();
+        List<PointLatLng> points = new List<PointLatLng>();
+        List<PointLatLng> nearestPointPosition = new List<PointLatLng>(); 
         
         private void AddMarker(MapObject marker)
         {
             objects.Add(marker);
             Map.Markers.Add(marker.getMarker());
             TitleTB.Text = "";
+        }
+
+        private void ClearPoints()
+        {
+            points.Clear();
+            ClearPointsBt.Content = points.Count;
         }
 
         public MainWindow()
@@ -42,13 +50,15 @@ namespace MegaMap
             variantCb.Items.Add("Автомобиль");
             variantCb.Items.Add("Маршрут");
             variantCb.Items.Add("Область");
+            
+            ClearPointsBt.Content = points.Count;
         }
 
         private void MapLoaded(object sender, RoutedEventArgs e)
         {      
             GMaps.Instance.Mode = AccessMode.ServerAndCache;          
                  
-            Map.MapProvider = OpenStreetMapProvider.Instance;          
+            Map.MapProvider = GMapProviders.GoogleMap;          
             
             Map.MinZoom = 2;    
             Map.MaxZoom = 17;
@@ -82,13 +92,28 @@ namespace MegaMap
                     Location location = new Location(TitleTB.Text, Map.Position);
                     AddMarker(location);
                 }
+
+                if ((string)variantCb.SelectedItem == "Маршрут")
+                {
+                    Route route = new Route(TitleTB.Text, points);
+                    AddMarker(route);
+                }
+
+                if((string)variantCb.SelectedItem == "Область")
+                {
+                    Area area = new Area(TitleTB.Text, points);
+                    AddMarker(area);
+                }
             }
+
+            ClearPoints();
         }
 
         private void ClearBt_Click(object sender, RoutedEventArgs e)
         {
             Map.Markers.Clear();
             objects.Clear();
+            ClearPoints();
         }
 
         private void CreatingObjectsRB_Checked(object sender, RoutedEventArgs e)
@@ -106,6 +131,8 @@ namespace MegaMap
         private void SearchPointBt_Click(object sender, RoutedEventArgs e)
         {
             MapObject mapObject = null;
+            NearestPointsLb.Items.Clear();
+            nearestPointPosition.Clear();
 
             foreach (MapObject obj in objects)
             {
@@ -119,8 +146,28 @@ namespace MegaMap
 
             foreach (MapObject obj in objects)
             {
-                NearestPointsLb.Items.Add(obj.getTitle());
+                if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
+                {
+                    NearestPointsLb.Items.Add(obj.getTitle());
+                    nearestPointPosition.Add(obj.getFocus());
+                }
             }
+        }
+
+        private void Map_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            points.Add(Map.Position);
+            ClearPointsBt.Content = points.Count;
+        }
+
+        private void ClearPointsBt_Click(object sender, RoutedEventArgs e)
+        {
+            ClearPoints();
+        }
+
+        private void FocusBt_Click(object sender, RoutedEventArgs e)
+        {
+            Map.Position = nearestPointPosition[NearestPointsLb.SelectedIndex];            
         }
     }
 }
