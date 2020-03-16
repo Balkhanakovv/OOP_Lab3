@@ -16,11 +16,14 @@ namespace MegaMap
 {
     class Area : MapObject
     {
-        private List<PointLatLng> points;
+        private List<PointLatLng> points = new List<PointLatLng>();
 
         public Area(string title, List<PointLatLng> points) : base(title)
         {
-            this.points = points;
+            foreach (PointLatLng point in points)
+            {
+                this.points.Add(point);
+            }
         }
 
         public override double getDistance(PointLatLng point)
