@@ -12,11 +12,11 @@ using System.Windows.Media.Imaging;
 
 namespace MegaMap
 {
-    class Human : MapObject
+    class Location : MapObject
     {
         private PointLatLng point;
 
-        public Human(string title, PointLatLng point) : base(title)
+        public Location(string title, PointLatLng point) : base(title)
         {
             this.point = point;
         }
@@ -43,7 +43,8 @@ namespace MegaMap
                     Width = 32,
                     Height = 32,
                     ToolTip = getTitle(),
-                    Source = new BitmapImage(new Uri("pack://application:,,,/resources/Human/human.png"))
+                    Margin = new System.Windows.Thickness(-16, -16, 0, 0),
+                    Source = new BitmapImage(new Uri("pack://application:,,,/resources/Location/location.png"))
                 }
             };
 

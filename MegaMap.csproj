@@ -81,7 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Route.cs" />
+    <Compile Include="classes\Route.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -90,17 +90,17 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Area.cs" />
-    <Compile Include="Car.cs" />
-    <Compile Include="Human.cs" />
-    <Compile Include="Location.cs" />
+    <Compile Include="classes\Area.cs" />
+    <Compile Include="classes\Car.cs" />
+    <Compile Include="classes\Human.cs" />
+    <Compile Include="classes\Location.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MapObject.cs" />
+    <Compile Include="classes\MapObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

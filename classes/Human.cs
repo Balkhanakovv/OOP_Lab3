@@ -9,14 +9,18 @@ using GMap.NET.WindowsPresentation;
 using System.Device.Location;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Windows;
 
 namespace MegaMap
 {
-    class Car : MapObject
+    class Human : MapObject
     {
         private PointLatLng point;
+        private PointLatLng destinationPoint;
+        public event EventHandler seated;
+        public GMapMarker marker;
 
-        public Car(string title, PointLatLng point) : base(title)
+        public Human(string title, PointLatLng point) : base(title)
         {
             this.point = point;
         }
@@ -25,28 +29,43 @@ namespace MegaMap
         {
             GeoCoordinate p1 = new GeoCoordinate(point.Lat, point.Lng);
             GeoCoordinate p2 = new GeoCoordinate(this.point.Lat, this.point.Lng);
+
             return p1.GetDistanceTo(p2);
+        }
+
+        public override PointLatLng getFocus()
+        {
+            return point;
         }
 
         public override GMapMarker getMarker()
         {
-            GMapMarker marker = new GMapMarker(point)
+            marker = new GMapMarker(point)
             {
                 Shape = new Image
                 {
                     Width = 32,
                     Height = 32,
                     ToolTip = getTitle(),
-                    Source = new BitmapImage(new Uri("pack://application:,,,/resources/Car/car.png"))
+                    Margin = new System.Windows.Thickness(-16, -16, 0, 0),
+                    Source = new BitmapImage(new Uri("pack://application:,,,/resources/Human/human.png"))                    
                 }
             };
 
             return marker;
-        }
-
-        public override PointLatLng getFocus()
+        }  
+        
+        public void CarArrived(object sender, EventArgs args)
         {
-            return point;
+            MessageBox.Show("Водитель прибыл");
+            try
+            {
+                seated?.Invoke(this, EventArgs.Empty);
+            }
+            catch
+            {
+                
+            }
         }
     }
 }

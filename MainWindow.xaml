@@ -6,14 +6,25 @@
         xmlns:local="clr-namespace:MegaMap"
         xmlns:WindowsPresentation="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation" x:Class="MegaMap.MainWindow"
         mc:Ignorable="d"
-        Title="MegaMap" Height="450" Width="800" MinHeight="450" MinWidth="800">
+        Title="MegaMap" Height="450" Width="800" MinHeight="450" MinWidth="800" Icon="resources/Location/location.png">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <WindowsPresentation:GMapControl Grid.Column="1" Name="Map" Loaded="MapLoaded" MouseRightButtonUp="Map_MouseRightButtonUp"/>
+        <Grid Grid.Column="1" Background="#FFBBBBBB">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <WindowsPresentation:GMapControl Grid.Column="1" Grid.Row="1" Name="Map" Loaded="MapLoaded" MouseRightButtonUp="Map_MouseRightButtonUp"/>
+            <ProgressBar x:Name="CarProgressBar" HorizontalAlignment="Center" Height="20" Margin="97,15,96,0" VerticalAlignment="Top" Width="349"/>
+            <Button x:Name="AddressBt" HorizontalAlignment="Left" Content="Куда" Margin="10,15,0,0" VerticalAlignment="Top" Width="75" Click="AddressBt_Click"/>
+            <Button x:Name="GoBt" HorizontalAlignment="Right" Content="Вызвать" Margin="0,15,10,0" VerticalAlignment="Top" Width="75" Click="GoBt_Click"/>
+        </Grid>
+
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -28,13 +39,13 @@
             <Grid Grid.Row="1" x:Name="CreateGrid" Visibility="Hidden">
                 <ComboBox x:Name="variantCb" Height="30" Width="230"  Grid.Column="0" FontSize="16"  FontFamily="Calibri" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="8,10,0,0"/>
                 <TextBox x:Name="TitleTB" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"  FontSize="16" FontFamily="Calibri" Margin="8,45,0,0"/>
-                <Button x:Name="AddPointBt" Height="30" Width="70" Grid.Column="0" Content="OK" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Calibri" Click="AddPointBt_Click" Margin="85,80,95,0" />
-                <Button x:Name="ClearBt" Height="30" Width="70" Grid.Column="0" Content="Сбросить" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Calibri" Margin="85,115,95,0" Click="ClearBt_Click"/>
-                <Button x:Name="ClearPointsBt" Height="30" Width="70" Grid.Column="0" FontSize="16" FontFamily="Calibri" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="ClearPointsBt_Click"/>
+                <Button x:Name="AddPointBt" Height="30" Width="70" Grid.Column="0" Content="OK" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Calibri" Click="AddPointBt_Click" Margin="89,80,91,0" />
+                <Button x:Name="ClearBt" Height="30" Width="70" Grid.Column="0" Content="Сбросить" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Calibri" Margin="89,115,91,0" Click="ClearBt_Click"/>
+                <Button x:Name="ClearPointsBt" Height="30" Width="70" Grid.Column="0" FontSize="16" FontFamily="Calibri" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="ClearPointsBt_Click" Margin="89,0,91,10"/>
             </Grid>
 
 
-            <Grid Grid.Row="1" x:Name="SearchGrid" Visibility="Visible">
+            <Grid Grid.Row="1" x:Name="SearchGrid" Visibility="Hidden">
                 <TextBox x:Name="SearchTB" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"  FontSize="16" FontFamily="Calibri" Margin="10,10,0,0"/>
                 <Button x:Name="SearchPointBt" Height="30" Width="70" Grid.Column="0" Content="OK" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Calibri" Margin="89,38,91,0" Click="SearchPointBt_Click"/>
                 <ListBox x:Name="NearestPointsLb" Height="191" Width="200" Margin="25,80,25,0" HorizontalAlignment="Center" VerticalAlignment="Top"/>

@@ -26,8 +26,13 @@ namespace MegaMap
     {
         List<MapObject> objects = new List<MapObject>();
         List<PointLatLng> points = new List<PointLatLng>();
-        List<PointLatLng> nearestPointPosition = new List<PointLatLng>(); 
-        
+        List<PointLatLng> nearestPointPosition = new List<PointLatLng>();
+
+        static PointLatLng startOfRoute;
+        static PointLatLng endOfRoute;
+
+
+
         private void AddMarker(MapObject marker)
         {
             objects.Add(marker);
@@ -143,15 +148,22 @@ namespace MegaMap
                     break;
                 }
             }
-
-            foreach (MapObject obj in objects)
-            {
-                if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
+            
+                foreach (MapObject obj in objects)
                 {
-                    NearestPointsLb.Items.Add(obj.getTitle());
-                    nearestPointPosition.Add(obj.getFocus());
-                }
-            }
+                    try
+                    {
+                        if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
+                        {
+                            NearestPointsLb.Items.Add(obj.getTitle());
+                            nearestPointPosition.Add(obj.getFocus());
+                        }
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }            
         }
 
         private void Map_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
@@ -169,5 +181,40 @@ namespace MegaMap
         {
             Map.Position = nearestPointPosition[NearestPointsLb.SelectedIndex];            
         }
+
+        private void AddressBt_Click(object sender, RoutedEventArgs e)
+        {
+            endOfRoute = nearestPointPosition[NearestPointsLb.SelectedIndex];
+        }
+
+        private void GoBt_Click(object sender, RoutedEventArgs e)
+        {
+            startOfRoute = nearestPointPosition[NearestPointsLb.SelectedIndex];
+            
+            Car nearestCar = null;
+            Human h = null;
+
+            foreach(MapObject obj in objects)
+            {
+                if (obj.GetType().ToString() == "MegaMap.Human" && obj.getFocus() == startOfRoute)
+                {
+                    h = (Human)obj;
+                    break;
+                }
+            }
+
+            foreach(MapObject obj in objects)
+            {
+                if(obj.GetType().ToString() == "MegaMap.Car")
+                {
+                    nearestCar = (Car)obj;
+                    break;
+                }
+            }
+            
+            nearestCar.MoveTo(startOfRoute);
+            nearestCar.Arrived += h.CarArrived;
+        }      
+                
     }
 }
