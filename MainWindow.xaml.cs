@@ -27,7 +27,7 @@ namespace MegaMap
         List<MapObject> objects = new List<MapObject>();
         List<PointLatLng> points = new List<PointLatLng>();
         List<PointLatLng> nearestPointPosition = new List<PointLatLng>();
-
+        List<MapObject> nearestObjects = new List<MapObject>();
         static PointLatLng startOfRoute;
         static PointLatLng endOfRoute;
 
@@ -138,6 +138,7 @@ namespace MegaMap
             MapObject mapObject = null;
             NearestPointsLb.Items.Clear();
             nearestPointPosition.Clear();
+            nearestObjects.Clear();
 
             foreach (MapObject obj in objects)
             {
@@ -149,21 +150,39 @@ namespace MegaMap
                 }
             }
             
-                foreach (MapObject obj in objects)
+            foreach (MapObject obj in objects)
+            {
+                try
                 {
-                    try
+                    if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
                     {
-                        if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
-                        {
-                            NearestPointsLb.Items.Add(obj.getTitle());
-                            nearestPointPosition.Add(obj.getFocus());
-                        }
+                        nearestObjects.Add(obj);
                     }
-                    catch
+                }
+                catch
+                {
+                    break;
+                }
+            }
+
+            var besidedObjects = nearestObjects.OrderBy(mapObj => mapObj.getDistance(mapObject.getFocus()));
+
+            foreach (MapObject obj in besidedObjects)
+            {
+                try
+                {
+                    if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
                     {
-                        break;
+                        
+                        NearestPointsLb.Items.Add(new { Title = obj.getTitle(), Distance = Math.Round(mapObject.getDistance(obj.getFocus()), 2)});
+                        nearestPointPosition.Add(obj.getFocus());
                     }
-                }            
+                }
+                catch
+                {
+                    break;
+                }
+            }
         }
 
         private void Map_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
