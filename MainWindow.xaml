@@ -51,8 +51,8 @@
                 <ListView x:Name="NearestPointsLb" Height="191" Width="200" Margin="25,80,25,0" HorizontalAlignment="Center" VerticalAlignment="Top">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Title" Width="80" DisplayMemberBinding="{Binding Title}"/>
-                            <GridViewColumn Header="Distance" Width="115" DisplayMemberBinding="{Binding Distance}"/>
+                            <GridViewColumn Header="Title" Width="135" DisplayMemberBinding="{Binding Title}"/>
+                            <GridViewColumn Header="Distance" Width="55" DisplayMemberBinding="{Binding Distance}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>

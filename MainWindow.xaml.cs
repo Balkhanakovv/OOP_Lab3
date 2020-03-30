@@ -16,6 +16,7 @@ using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using System.Device.Location;
+using System.Threading;
 
 namespace MegaMap
 {
@@ -27,11 +28,13 @@ namespace MegaMap
         List<MapObject> objects = new List<MapObject>();
         List<PointLatLng> points = new List<PointLatLng>();
         List<PointLatLng> nearestPointPosition = new List<PointLatLng>();
+        
         List<MapObject> nearestObjects = new List<MapObject>();
+        
         static PointLatLng startOfRoute;
         static PointLatLng endOfRoute;
 
-
+        static IEnumerable<MapObject> besidedObjects;
 
         private void AddMarker(MapObject marker)
         {
@@ -165,7 +168,7 @@ namespace MegaMap
                 }
             }
 
-            var besidedObjects = nearestObjects.OrderBy(mapObj => mapObj.getDistance(mapObject.getFocus()));
+            besidedObjects = nearestObjects.OrderBy(mapObj => mapObj.getDistance(mapObject.getFocus()));
 
             foreach (MapObject obj in besidedObjects)
             {
@@ -203,26 +206,36 @@ namespace MegaMap
 
         private void AddressBt_Click(object sender, RoutedEventArgs e)
         {
-            endOfRoute = nearestPointPosition[NearestPointsLb.SelectedIndex];
+            try
+            {
+                endOfRoute = nearestPointPosition[NearestPointsLb.SelectedIndex];
+            }
+            catch
+            {
+                MessageBox.Show("Выберите конец маршрута!");
+            }
         }
 
         private void GoBt_Click(object sender, RoutedEventArgs e)
         {
-            startOfRoute = nearestPointPosition[NearestPointsLb.SelectedIndex];
-            
+            startOfRoute = nearestPointPosition[NearestPointsLb.SelectedIndex];            
+
+            var besidedObj = objects.OrderBy(mapObject => mapObject.getDistance(startOfRoute));
+
             Car nearestCar = null;
             Human h = null;
 
-            foreach(MapObject obj in objects)
+            foreach (MapObject obj in objects)
             {
                 if (obj.GetType().ToString() == "MegaMap.Human" && obj.getFocus() == startOfRoute)
                 {
                     h = (Human)obj;
+                    h.destinationPoint = endOfRoute;
                     break;
                 }
             }
 
-            foreach(MapObject obj in objects)
+            foreach(MapObject obj in besidedObj)
             {
                 if(obj.GetType().ToString() == "MegaMap.Car")
                 {
@@ -233,7 +246,8 @@ namespace MegaMap
             
             nearestCar.MoveTo(startOfRoute);
             nearestCar.Arrived += h.CarArrived;
-        }      
+            h.seated += nearestCar.passengerSeated;
+        }
                 
     }
 }

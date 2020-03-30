@@ -85,6 +85,7 @@ namespace MegaMap
 
                     Thread.Sleep(1000);
                 }
+                
                 Arrived?.Invoke(this, null);
             }
             catch
@@ -93,9 +94,12 @@ namespace MegaMap
             }
         }
           
-        public static void passengerSeated(object sender, EventArgs args)
+        public void passengerSeated(object sender, EventArgs args)
         {
-            
+            Human h = (Human)sender;
+
+            MoveTo(h.destinationPoint);
+            h.point = point;
         }
     }
 }

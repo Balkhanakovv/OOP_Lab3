@@ -15,10 +15,10 @@ namespace MegaMap
 {
     class Human : MapObject
     {
-        private PointLatLng point;
-        private PointLatLng destinationPoint;
+        public PointLatLng point { get; set; }
+        public PointLatLng destinationPoint { get; set; }
         public event EventHandler seated;
-        public GMapMarker marker;
+        private GMapMarker marker;
 
         public Human(string title, PointLatLng point) : base(title)
         {
@@ -56,11 +56,22 @@ namespace MegaMap
         }  
         
         public void CarArrived(object sender, EventArgs args)
-        {
-            MessageBox.Show("Водитель прибыл");
+        {            
             try
             {
-                seated?.Invoke(this, EventArgs.Empty);
+                var tmp = getDistance(destinationPoint);
+
+                if (tmp > 20)
+                {
+                    MessageBox.Show("Водитель прибыл на место назначения.");
+                    seated?.Invoke(this, EventArgs.Empty);
+                    marker.Shape = null;
+                }
+                else
+                {
+                    MessageBox.Show("Вы на месте.");
+                    getMarker();
+                }
             }
             catch
             {
