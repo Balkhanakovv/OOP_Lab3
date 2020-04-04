@@ -20,6 +20,13 @@ using System.Threading;
 
 namespace MegaMap
 {
+    public class MapPoint
+    {
+        public string Title { get; set; }
+        public double Distance { get; set; }
+    }
+
+
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
@@ -177,12 +184,24 @@ namespace MegaMap
                     if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
                     {
                         
-                        NearestPointsLb.Items.Add(new { Title = obj.getTitle(), Distance = Math.Round(mapObject.getDistance(obj.getFocus()), 2)});
+                        NearestPointsLb.Items.Add(new MapPoint{ 
+                            Title = obj.getTitle(), 
+                            Distance = Math.Round(mapObject.getDistance(obj.getFocus()), 2)
+                        });
                         nearestPointPosition.Add(obj.getFocus());
                     }
                 }
                 catch
                 {
+                    break;
+                }
+            }
+
+            foreach (MapPoint point in NearestPointsLb.Items)
+            {
+                if (point.Distance == 0)
+                {
+                    NearestPointsLb.Items.Remove(point);
                     break;
                 }
             }
@@ -201,7 +220,44 @@ namespace MegaMap
 
         private void FocusBt_Click(object sender, RoutedEventArgs e)
         {
-            Map.Position = nearestPointPosition[NearestPointsLb.SelectedIndex];            
+            MapObject point = new Location(TitleTB.Text, Map.Position);
+            NearestPointsLb.Items.Clear();
+            nearestPointPosition.Clear();
+            nearestObjects.Clear();
+
+            foreach (MapObject obj in objects)
+            {
+                try
+                {
+                    if ((point.getDistance(obj.getFocus()) < 500))
+                    {
+                        nearestObjects.Add(obj);
+                    }
+                }
+                catch
+                {
+                    break;
+                }
+            }
+
+            besidedObjects = nearestObjects.OrderBy(mapObj => mapObj.getDistance(point.getFocus()));
+
+            foreach (MapObject obj in besidedObjects)
+            {
+                try
+                {
+                    if ((point.getDistance(obj.getFocus()) < 500) || (point.getTitle() == obj.getTitle()))
+                    {
+
+                        NearestPointsLb.Items.Add(new { Title = obj.getTitle(), Distance = Math.Round(point.getDistance(obj.getFocus()), 2) });
+                        nearestPointPosition.Add(obj.getFocus());
+                    }
+                }
+                catch
+                {
+                    break;
+                }
+            }
         }
 
         private void AddressBt_Click(object sender, RoutedEventArgs e)
@@ -248,6 +304,10 @@ namespace MegaMap
             nearestCar.Arrived += h.CarArrived;
             h.seated += nearestCar.passengerSeated;
         }
-                
+
+        private void NearestPointsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Map.Position = Map.Position = nearestPointPosition[NearestPointsLb.SelectedIndex];
+        }
     }
 }

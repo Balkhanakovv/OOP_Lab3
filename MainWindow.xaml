@@ -48,7 +48,7 @@
             <Grid Grid.Row="1" x:Name="SearchGrid" Visibility="Hidden">
                 <TextBox x:Name="SearchTB" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"  FontSize="16" FontFamily="Calibri" Margin="10,10,0,0"/>
                 <Button x:Name="SearchPointBt" Height="30" Width="70" Grid.Column="0" Content="OK" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Calibri" Margin="89,38,91,0" Click="SearchPointBt_Click"/>
-                <ListView x:Name="NearestPointsLb" Height="191" Width="200" Margin="25,80,25,0" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <ListView x:Name="NearestPointsLb" Height="191" Width="200" Margin="25,80,25,0" HorizontalAlignment="Center" VerticalAlignment="Top" MouseDoubleClick="NearestPointsLb_MouseDoubleClick">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Title" Width="135" DisplayMemberBinding="{Binding Title}"/>
