@@ -69,7 +69,6 @@ namespace MegaMap
                 else
                 {
                     MessageBox.Show("Вы на месте.");
-
                 }
             }
             catch

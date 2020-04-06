@@ -273,6 +273,7 @@ namespace MegaMap
 
         private void GoBt_Click(object sender, RoutedEventArgs e)
         {
+            CarProgressBar.Value = 0;
             startOfRoute = nearestPointPosition[NearestPointsLb.SelectedIndex];            
 
             var besidedObj = objects.OrderBy(mapObject => mapObject.getDistance(startOfRoute));
@@ -313,7 +314,15 @@ namespace MegaMap
         private void Focus_Follow(object sender, EventArgs args)
         {
             Car c = (Car)sender;
+            CarProgressBar.Maximum = c.route.Points.Count;
             Map.Position = c.getFocus();
+
+            if (CarProgressBar.Value != CarProgressBar.Maximum)
+                CarProgressBar.Value += 1;
+            else
+            {
+                CarProgressBar.Value = 0;
+            }
         }
     }
 }

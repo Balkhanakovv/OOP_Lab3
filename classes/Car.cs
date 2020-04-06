@@ -18,13 +18,14 @@ namespace MegaMap
     {
         private PointLatLng point;
         private List<Human> passengers = new List<Human>();
-        private MapRoute route;
+        public MapRoute route { get; private set; }
         private GMapMarker marker;
 
         private Human h;
 
         public event EventHandler Arrived;
         public event EventHandler Follow;
+        public event EventHandler Count;
 
         public Car(string title, PointLatLng point) : base(title)
         {
@@ -88,7 +89,7 @@ namespace MegaMap
                         if (h != null)
                         {
                             h.marker.Position = point;
-                            Follow?.Invoke(this, null);
+                            Follow?.Invoke(this, null);                            
                         }
                     });
 
