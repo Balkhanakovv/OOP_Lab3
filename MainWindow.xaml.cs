@@ -34,8 +34,7 @@ namespace MegaMap
     {
         List<MapObject> objects = new List<MapObject>();
         List<PointLatLng> points = new List<PointLatLng>();
-        List<PointLatLng> nearestPointPosition = new List<PointLatLng>();
-        
+        List<PointLatLng> nearestPointPosition = new List<PointLatLng>();        
         List<MapObject> nearestObjects = new List<MapObject>();
         
         static PointLatLng startOfRoute;
@@ -303,11 +302,18 @@ namespace MegaMap
             nearestCar.MoveTo(startOfRoute);
             nearestCar.Arrived += h.CarArrived;
             h.seated += nearestCar.passengerSeated;
+            nearestCar.Follow += Focus_Follow;
         }
 
         private void NearestPointsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             Map.Position = Map.Position = nearestPointPosition[NearestPointsLb.SelectedIndex];
+        }
+
+        private void Focus_Follow(object sender, EventArgs args)
+        {
+            Car c = (Car)sender;
+            Map.Position = c.getFocus();
         }
     }
 }

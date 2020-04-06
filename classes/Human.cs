@@ -17,8 +17,8 @@ namespace MegaMap
     {
         public PointLatLng point { get; set; }
         public PointLatLng destinationPoint { get; set; }
+        public GMapMarker marker { get; private set; }
         public event EventHandler seated;
-        private GMapMarker marker;
 
         public Human(string title, PointLatLng point) : base(title)
         {
@@ -61,16 +61,15 @@ namespace MegaMap
             {
                 var tmp = getDistance(destinationPoint);
 
-                if (tmp > 20)
+                if (tmp > 30)
                 {
                     MessageBox.Show("Водитель прибыл на место назначения.");
                     seated?.Invoke(this, EventArgs.Empty);
-                    marker.Shape = null;
                 }
                 else
                 {
                     MessageBox.Show("Вы на месте.");
-                    getMarker();
+
                 }
             }
             catch

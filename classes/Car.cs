@@ -21,7 +21,10 @@ namespace MegaMap
         private MapRoute route;
         private GMapMarker marker;
 
+        private Human h;
+
         public event EventHandler Arrived;
+        public event EventHandler Follow;
 
         public Car(string title, PointLatLng point) : base(title)
         {
@@ -81,12 +84,24 @@ namespace MegaMap
                     {
                         this.point = point;
                         marker.Position = point;
+
+                        if (h != null)
+                        {
+                            h.marker.Position = point;
+                            Follow?.Invoke(this, null);
+                        }
                     });
 
                     Thread.Sleep(1000);
                 }
-                
-                Arrived?.Invoke(this, null);
+
+                if (h == null)
+                    Arrived?.Invoke(this, null);
+                else
+                {
+                    h = null;
+                    Arrived?.Invoke(this, null);
+                }
             }
             catch
             {
@@ -96,8 +111,7 @@ namespace MegaMap
           
         public void passengerSeated(object sender, EventArgs args)
         {
-            Human h = (Human)sender;
-
+            h = (Human)sender;
             MoveTo(h.destinationPoint);
             h.point = point;
         }
