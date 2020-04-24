@@ -17,6 +17,7 @@ namespace MegaMap
     class Route : MapObject
     {
         private List<PointLatLng> points = new List<PointLatLng>();
+        public GMapRoute marker = null;
 
         public Route(string title, List<PointLatLng> points) : base(title)
         {
@@ -35,7 +36,7 @@ namespace MegaMap
 
         public override GMapMarker getMarker()
         {
-            GMapMarker marker = new GMapRoute(points)
+            marker = new GMapRoute(points)
             {
                 Shape = new Path
                 {

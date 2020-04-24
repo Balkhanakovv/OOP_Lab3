@@ -39,8 +39,10 @@ namespace MegaMap
         
         static PointLatLng startOfRoute;
         static PointLatLng endOfRoute;
-
         static IEnumerable<MapObject> besidedObjects;
+
+        private static Human h;
+        private static Car nearestCar;
 
         private void AddMarker(MapObject marker)
         {
@@ -278,8 +280,8 @@ namespace MegaMap
 
             var besidedObj = objects.OrderBy(mapObject => mapObject.getDistance(startOfRoute));
 
-            Car nearestCar = null;
-            Human h = null;
+            nearestCar = null;
+            h = null;
 
             foreach (MapObject obj in objects)
             {
@@ -304,6 +306,7 @@ namespace MegaMap
             nearestCar.Arrived += h.CarArrived;
             h.seated += nearestCar.passengerSeated;
             nearestCar.Follow += Focus_Follow;
+            nearestCar.ArrivedToLocate += h.PassengerArrived;
         }
 
         private void NearestPointsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -314,14 +317,39 @@ namespace MegaMap
         private void Focus_Follow(object sender, EventArgs args)
         {
             Car c = (Car)sender;
+            nearestCar.Arrived -= h.CarArrived;
+
+            if (c.getFocus() == c.route.Points[0])
+            {
+                Route route = new Route("SystemRoutForOurCar", c.route.Points);
+                AddMarker(route);
+            }
+
             CarProgressBar.Maximum = c.route.Points.Count;
             Map.Position = c.getFocus();
 
-            if (CarProgressBar.Value != CarProgressBar.Maximum)
+            if (CarProgressBar.Value != CarProgressBar.Maximum - 1)
                 CarProgressBar.Value += 1;
             else
             {
                 CarProgressBar.Value = 0;
+                h.seated -= nearestCar.passengerSeated;
+                nearestCar.Follow -= Focus_Follow;
+                nearestCar.ArrivedToLocate -= h.PassengerArrived;
+                MessageBox.Show("Вы приехали!");
+                h.point = h.destinationPoint;
+                NearestPointsLb.Items.Clear();
+
+                foreach (MapObject obj in objects)
+                {
+                    if (obj.GetType().ToString() == "MegaMap.Route" && obj.getTitle() == "SystemRoutForOurCar")
+                    {
+                        Route r = (Route)obj;
+                        objects.Remove(r);
+                        Map.Markers.Remove(r.marker);
+                        break;
+                    }
+                }
             }
         }
     }

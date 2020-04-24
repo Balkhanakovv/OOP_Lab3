@@ -66,15 +66,16 @@ namespace MegaMap
                     MessageBox.Show("Водитель прибыл на место назначения.");
                     seated?.Invoke(this, EventArgs.Empty);
                 }
-                else
-                {
-                    MessageBox.Show("Вы на месте.");
-                }
             }
             catch
             {
                 
             }
+        }
+
+        public void PassengerArrived(object sender, EventArgs args)
+        {
+            MessageBox.Show("Вы на месте.");
         }
     }
 }

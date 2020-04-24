@@ -24,8 +24,8 @@ namespace MegaMap
         private Human h;
 
         public event EventHandler Arrived;
+        public event EventHandler ArrivedToLocate;
         public event EventHandler Follow;
-        public event EventHandler Count;
 
         public Car(string title, PointLatLng point) : base(title)
         {
@@ -96,12 +96,14 @@ namespace MegaMap
                     Thread.Sleep(1000);
                 }
 
-                if (h == null)
+                if (h == null) 
+                {
                     Arrived?.Invoke(this, null);
+                }
                 else
                 {
                     h = null;
-                    Arrived?.Invoke(this, null);
+                    ArrivedToLocate?.Invoke(this, null);
                 }
             }
             catch
