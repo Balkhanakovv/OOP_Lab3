@@ -37,12 +37,14 @@ namespace MegaMap
         List<PointLatLng> nearestPointPosition = new List<PointLatLng>();        
         List<MapObject> nearestObjects = new List<MapObject>();
         
-        static PointLatLng startOfRoute;
-        static PointLatLng endOfRoute;
-        static IEnumerable<MapObject> besidedObjects;
+        PointLatLng startOfRoute;
+        PointLatLng endOfRoute;
+        IEnumerable<MapObject> besidedObjects;
 
-        private static Human h;
-        private static Car nearestCar;
+        private string[] boxes = new string[5] {"Местоположение", "Человек", "Автомобиль", "Маршрут", "Область" }; 
+
+        private Human h;
+        private Car nearestCar;
 
         private void AddMarker(MapObject marker)
         {
@@ -61,11 +63,11 @@ namespace MegaMap
         {
             InitializeComponent();
 
-            variantCb.Items.Add("Местоположение");
-            variantCb.Items.Add("Человек");
-            variantCb.Items.Add("Автомобиль");
-            variantCb.Items.Add("Маршрут");
-            variantCb.Items.Add("Область");
+            variantCb.Items.Add(boxes[0]);
+            variantCb.Items.Add(boxes[1]);
+            variantCb.Items.Add(boxes[2]);
+            variantCb.Items.Add(boxes[3]);
+            variantCb.Items.Add(boxes[4]);
             
             ClearPointsBt.Content = points.Count;
         }
@@ -89,37 +91,35 @@ namespace MegaMap
 
         private void AddPointBt_Click(object sender, RoutedEventArgs e)
         {
+            MapObject mapObject = null;
+
             if (CreatingObjectsRB.IsChecked == true)
             {
-                if ((string)variantCb.SelectedItem == "Человек")
+                if ((string)variantCb.SelectedItem == boxes[1])
                 {
-                    Human human = new Human(TitleTB.Text, Map.Position);
-                    AddMarker(human);
+                    mapObject = new Human(TitleTB.Text, Map.Position);                    
                 }
 
-                if ((string)variantCb.SelectedItem == "Автомобиль")
+                if ((string)variantCb.SelectedItem == boxes[2])
                 {
-                    Car car = new Car(TitleTB.Text, Map.Position);
-                    AddMarker(car);
+                    mapObject = new Car(TitleTB.Text, Map.Position);
                 }
 
-                if ((string)variantCb.SelectedItem == "Местоположение")
+                if ((string)variantCb.SelectedItem == boxes[0])
                 {
-                    Location location = new Location(TitleTB.Text, Map.Position);
-                    AddMarker(location);
+                    mapObject = new Location(TitleTB.Text, Map.Position);
                 }
 
-                if ((string)variantCb.SelectedItem == "Маршрут")
+                if ((string)variantCb.SelectedItem == boxes[3])
                 {
-                    Route route = new Route(TitleTB.Text, points);
-                    AddMarker(route);
+                    mapObject = new Route(TitleTB.Text, points);
                 }
 
-                if((string)variantCb.SelectedItem == "Область")
+                if((string)variantCb.SelectedItem == boxes[4])
                 {
-                    Area area = new Area(TitleTB.Text, points);
-                    AddMarker(area);
+                    mapObject = new Area(TitleTB.Text, points);
                 }
+                AddMarker(mapObject);
             }
 
             ClearPoints();
@@ -153,7 +153,7 @@ namespace MegaMap
 
             foreach (MapObject obj in objects)
             {
-                if (obj.getTitle() == SearchTB.Text)
+                if (obj.getTitle().Contains(SearchTB.Text))
                 {
                     mapObject = obj;
                     Map.Position = obj.getFocus();
@@ -163,26 +163,18 @@ namespace MegaMap
             
             foreach (MapObject obj in objects)
             {
-                try
-                {
-                    if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
+                
+                    if ((mapObject.getDistance(obj.getFocus()) < 500) || (obj.getTitle().Contains(mapObject.getTitle())))
                     {
                         nearestObjects.Add(obj);
                     }
-                }
-                catch
-                {
-                    break;
-                }
             }
 
             besidedObjects = nearestObjects.OrderBy(mapObj => mapObj.getDistance(mapObject.getFocus()));
 
             foreach (MapObject obj in besidedObjects)
             {
-                try
-                {
-                    if ((mapObject.getDistance(obj.getFocus()) < 500) || (mapObject.getTitle() == obj.getTitle()))
+                    if ((mapObject.getDistance(obj.getFocus()) < 500) || (obj.getTitle().Contains(mapObject.getTitle())))
                     {
                         
                         NearestPointsLb.Items.Add(new MapPoint{ 
@@ -191,11 +183,6 @@ namespace MegaMap
                         });
                         nearestPointPosition.Add(obj.getFocus());
                     }
-                }
-                catch
-                {
-                    break;
-                }
             }
 
             foreach (MapPoint point in NearestPointsLb.Items)
@@ -228,17 +215,11 @@ namespace MegaMap
 
             foreach (MapObject obj in objects)
             {
-                try
-                {
+                
                     if ((point.getDistance(obj.getFocus()) < 500))
                     {
                         nearestObjects.Add(obj);
                     }
-                }
-                catch
-                {
-                    break;
-                }
             }
 
             besidedObjects = nearestObjects.OrderBy(mapObj => mapObj.getDistance(point.getFocus()));
@@ -285,7 +266,7 @@ namespace MegaMap
 
             foreach (MapObject obj in objects)
             {
-                if (obj.GetType().ToString() == "MegaMap.Human" && obj.getFocus() == startOfRoute)
+                if ((obj is Human) && obj.getFocus() == startOfRoute)
                 {
                     h = (Human)obj;
                     h.destinationPoint = endOfRoute;
@@ -295,7 +276,7 @@ namespace MegaMap
 
             foreach(MapObject obj in besidedObj)
             {
-                if(obj.GetType().ToString() == "MegaMap.Car")
+                if(obj is Car)
                 {
                     nearestCar = (Car)obj;
                     break;
@@ -311,7 +292,7 @@ namespace MegaMap
 
         private void NearestPointsLb_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            Map.Position = Map.Position = nearestPointPosition[NearestPointsLb.SelectedIndex];
+            Map.Position = nearestPointPosition[NearestPointsLb.SelectedIndex + 1];
         }
 
         private void Focus_Follow(object sender, EventArgs args)
@@ -321,7 +302,7 @@ namespace MegaMap
 
             if (c.getFocus() == c.route.Points[0])
             {
-                Route route = new Route("SystemRoutForOurCar", c.route.Points);
+                Route route = new Route("SystemRoutForOurCar", c.route.Points, true);
                 AddMarker(route);
             }
 
@@ -342,12 +323,15 @@ namespace MegaMap
 
                 foreach (MapObject obj in objects)
                 {
-                    if (obj.GetType().ToString() == "MegaMap.Route" && obj.getTitle() == "SystemRoutForOurCar")
+                    if (obj is Route)
                     {
                         Route r = (Route)obj;
-                        objects.Remove(r);
-                        Map.Markers.Remove(r.marker);
-                        break;
+                        if (r.IsVisible)
+                        {
+                            objects.Remove(r);
+                            Map.Markers.Remove(r.marker);
+                            break;
+                        }
                     }
                 }
             }

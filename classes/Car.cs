@@ -77,8 +77,6 @@ namespace MegaMap
 
         private void MoveByRoute()
         {
-            try
-            {
                 foreach (var point in route.Points)
                 {
                     Application.Current.Dispatcher.Invoke(delegate
@@ -105,11 +103,6 @@ namespace MegaMap
                     h = null;
                     ArrivedToLocate?.Invoke(this, null);
                 }
-            }
-            catch
-            {
-
-            }
         }
           
         public void passengerSeated(object sender, EventArgs args)

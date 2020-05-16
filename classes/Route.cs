@@ -19,8 +19,20 @@ namespace MegaMap
         private List<PointLatLng> points = new List<PointLatLng>();
         public GMapRoute marker = null;
 
+        public bool IsVisible { private set; get; }
+
         public Route(string title, List<PointLatLng> points) : base(title)
         {
+            foreach (PointLatLng point in points)
+            {
+                this.points.Add(point);
+            }
+        }
+
+        public Route(string title, List<PointLatLng> points, bool IsVisible) : base(title)
+        {
+            this.IsVisible = IsVisible;
+
             foreach (PointLatLng point in points)
             {
                 this.points.Add(point);
